@@ -1,0 +1,2205 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{proj1a}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize Otter}
+\PY{k+kn}{import} \PY{n+nn}{otter}
+\PY{n}{grader} \PY{o}{=} \PY{n}{otter}\PY{o}{.}\PY{n}{Notebook}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{proj1a.ipynb}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{project-1a-exploring-cook-county-housing}{%
+\section{Project 1A: Exploring Cook County
+Housing}\label{project-1a-exploring-cook-county-housing}}
+
+\hypertarget{due-date-thursday-october-13th-1159-pm-pdt}{%
+\subsection{Due Date: Thursday, October 13th, 11:59 PM
+PDT}\label{due-date-thursday-october-13th-1159-pm-pdt}}
+
+\hypertarget{collaboration-policy}{%
+\subsubsection{Collaboration Policy}\label{collaboration-policy}}
+
+Data science is a collaborative activity. While you may talk with others
+about the homework, we ask that you \textbf{write your solutions
+individually}. If you do discuss the assignments with others please
+\textbf{include their names} in the collaborators cell below.
+
+    \textbf{Collaborators:} \emph{list names here}
+
+    
+
+    \hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+This project explores what can be learned from an extensive housing data
+set that is embedded in a dense social context in Cook County, Illinois.
+
+Here in part A, we will guide you through some basic exploratory data
+analysis (EDA) to understand the structure of the data. Next, you will
+be adding a few new features to the dataset, while cleaning the data as
+well in the process.
+
+In part B, you will specify and fit a linear model for the purpose of
+prediction. Finally, we will analyze the error of the model and
+brainstorm ways to improve the model's performance.
+
+\hypertarget{score-breakdown}{%
+\subsection{Score Breakdown}\label{score-breakdown}}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule()
+Question & Part & Points \\
+\midrule()
+\endhead
+1 & 1 & 1 \\
+1 & 2 & 1 \\
+1 & 3 & 1 \\
+1 & 4 & 1 \\
+2 & 1 & 1 \\
+2 & 2 & 1 \\
+3 & 1 & 3 \\
+3 & 2 & 1 \\
+3 & 3 & 1 \\
+4 & - & 2 \\
+5 & 1 & 1 \\
+5 & 2 & 2 \\
+5 & 3 & 2 \\
+6 & 1 & 1 \\
+6 & 2 & 2 \\
+6 & 3 & 1 \\
+6 & 4 & 2 \\
+6 & 5 & 1 \\
+7 & 1 & 1 \\
+7 & 2 & 2 \\
+Total & - & 28 \\
+\bottomrule()
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{from} \PY{n+nn}{pandas}\PY{n+nn}{.}\PY{n+nn}{api}\PY{n+nn}{.}\PY{n+nn}{types} \PY{k+kn}{import} \PY{n}{CategoricalDtype}
+
+\PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+
+\PY{k+kn}{import} \PY{n+nn}{warnings}
+\PY{n}{warnings}\PY{o}{.}\PY{n}{filterwarnings}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{k+kn}{import} \PY{n+nn}{zipfile}
+\PY{k+kn}{import} \PY{n+nn}{os}
+
+\PY{k+kn}{from} \PY{n+nn}{ds100\PYZus{}utils} \PY{k+kn}{import} \PY{n}{run\PYZus{}linear\PYZus{}regression\PYZus{}test}
+
+\PY{c+c1}{\PYZsh{} Plot settings}
+\PY{n}{plt}\PY{o}{.}\PY{n}{rcParams}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{figure.figsize}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{rcParams}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{font.size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{12}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{the-data}{%
+\section{The Data}\label{the-data}}
+
+The data set consists of over 500 thousand records from Cook County,
+Illinois, the county where Chicago is located. The data set we will be
+working with has 61 features in total; the 62nd is sales price, which
+you will predict with linear regression in the next part of this
+project. An explanation of each variable can be found in the included
+\texttt{codebook.txt} file. Some of the columns have been filtered out
+to ensure this assignment doesn't become overly long when dealing with
+data cleaning and formatting.
+
+The data are split into training and test sets with 204,792 and 68,264
+observations, respectively, but we will only be working on the training
+set for this part of the project.
+
+Let's first extract the data from the \texttt{cook\_county\_data.zip}.
+Notice we didn't leave the \texttt{csv} files directly in the directory
+because they take up too much space without some prior compression.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{with} \PY{n}{zipfile}\PY{o}{.}\PY{n}{ZipFile}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cook\PYZus{}county\PYZus{}data.zip}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{item}\PY{p}{:}
+    \PY{n}{item}\PY{o}{.}\PY{n}{extractall}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Let's load the training data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cook\PYZus{}county\PYZus{}train.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{index\PYZus{}col}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Unnamed: 0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    As a good sanity check, we should at least verify that the data shape
+matches the description.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 204792 observations and 62 features in training data}
+\PY{k}{assert} \PY{n}{training\PYZus{}data}\PY{o}{.}\PY{n}{shape} \PY{o}{==} \PY{p}{(}\PY{l+m+mi}{204792}\PY{p}{,} \PY{l+m+mi}{62}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Sale Price is provided in the training data}
+\PY{k}{assert} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sale Price}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{in} \PY{n}{training\PYZus{}data}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{values}
+\end{Verbatim}
+\end{tcolorbox}
+
+    The next order of business is getting a feel for the variables in our
+data. A more detailed description of each variable is included in
+\texttt{codebook.txt} (in the same directory as this notebook).
+\textbf{You should take some time to familiarize yourself with the
+codebook before moving forward.}
+
+Let's take a quick look at all the current columns in our training data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{values}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+array(['PIN', 'Property Class', 'Neighborhood Code', 'Land Square Feet',
+       'Town Code', 'Apartments', 'Wall Material', 'Roof Material',
+       'Basement', 'Basement Finish', 'Central Heating', 'Other Heating',
+       'Central Air', 'Fireplaces', 'Attic Type', 'Attic Finish',
+       'Design Plan', 'Cathedral Ceiling', 'Construction Quality',
+       'Site Desirability', 'Garage 1 Size', 'Garage 1 Material',
+       'Garage 1 Attachment', 'Garage 1 Area', 'Garage 2 Size',
+       'Garage 2 Material', 'Garage 2 Attachment', 'Garage 2 Area',
+       'Porch', 'Other Improvements', 'Building Square Feet',
+       'Repair Condition', 'Multi Code', 'Number of Commercial Units',
+       'Estimate (Land)', 'Estimate (Building)', 'Deed No.', 'Sale Price',
+       'Longitude', 'Latitude', 'Census Tract',
+       'Multi Property Indicator', 'Modeling Group', 'Age', 'Use',
+       "O'Hare Noise", 'Floodplain', 'Road Proximity', 'Sale Year',
+       'Sale Quarter', 'Sale Half-Year', 'Sale Quarter of Year',
+       'Sale Month of Year', 'Sale Half of Year', 'Most Recent Sale',
+       'Age Decade', 'Pure Market Filter', 'Garage Indicator',
+       'Neigborhood Code (mapping)', 'Town and Neighborhood',
+       'Description', 'Lot Size'], dtype=object)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Description}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+'This property, sold on 09/14/2015, is a one-story houeshold located at 2950 S
+LYMAN ST.It has a total of 6 rooms, 3 of which are bedrooms, and 1.0 of which
+are bathrooms.'
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{part-1-contextualizing-the-data}{%
+\section{Part 1: Contextualizing the
+Data}\label{part-1-contextualizing-the-data}}
+
+Let's try to understand the background of our dataset before diving into
+a full-scale analysis.
+
+\hypertarget{question-1}{%
+\subsection{Question 1}\label{question-1}}
+
+\hypertarget{part-1}{%
+\subsubsection{Part 1}\label{part-1}}
+
+Based on the columns present in this data set and the values that they
+take, what do you think each row represents? That is, what is the
+granularity of this data set?
+
+    Each row of the data set represents the data for one house. The
+granularity of this data set is extremely fine as it showcases the all
+the essential information such as the area of the each room in the
+property, details about its location and proximity to major roads.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-2}{%
+\subsubsection{Part 2}\label{part-2}}
+
+Why do you think this data was collected? For what purposes? By whom?
+
+This question calls for your speculation and is looking for
+thoughtfulness, not correctness.
+
+    I believe this data was collected to evaluate the price of every
+property taking all of its features in consideration to evaluate a
+well-rounded price.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-3}{%
+\subsubsection{Part 3}\label{part-3}}
+
+Certain variables in this data set contain information that either
+directly contains demographic information (data on people) or could when
+linked to other data sets. Identify at least one demographic-related
+variable and explain the nature of the demographic data it embeds.
+
+    The `in\_expensive\_neighborhood' column contains demographic
+information as it tells us their financial stabilty becuase it tells
+whether the person or family living there can afford the house in an
+expensive neighborhood and if they can they are inclined to be wealthy
+or financialy stable
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-4}{%
+\subsubsection{Part 4}\label{part-4}}
+
+Craft at least two questions about housing in Cook County that can be
+answered with this data set and provide the type of analytical tool you
+would use to answer it (e.g.~``I would create a \_\_\_ plot of \_\_\_
+and \textbf{\emph{'' or ''I would calculate the }} {[}summary
+statistic{]} for \_\_\_ and \_\_\_\_''). Be sure to reference the
+columns that you would use and any additional data sets you would need
+to answer that question.
+
+    Q1) Is there any relationship between the construction quality of the
+house and the age of the house? A) Since the `Construction Quality'
+column is qualitative, I would create four histograms for all four
+numbers denoting the construction quality where the frequency of the
+property's age would on the y-axis and the age on the x-axis. I can
+either overlay them on top of each other but that might get consfusing
+so we can plot them seperately in the same figure, making them easier to
+compare.
+
+Q2) Is the sale price affected by the proximity to a major road? A) I
+would plot 2 boxplots on the same figure one plot for properties close
+to a major road and one plot for properties away from the mahor road
+using the `Sale Price' and `Road Proximity' columns.
+
+    \hypertarget{part-2-exploratory-data-analysis}{%
+\section{Part 2: Exploratory Data
+Analysis}\label{part-2-exploratory-data-analysis}}
+
+This data set was collected by the
+\href{https://datacatalog.cookcountyil.gov/Property-Taxation/Archive-Cook-County-Assessor-s-Residential-Sales-D/5pge-nu6u}{Cook
+County Assessor's Office} in order to build a model to predict the
+monetary value of a home (if you didn't put this for your answer for
+Question 1 Part 2, please don't go back and change it - we wanted
+speculation!). You can read more about data collection in the CCAO's
+\href{https://gitlab.com/ccao-data-science---modeling/ccao_sf_cama_dev/-/blob/master/documentation/Preliminary\%20Report\%20on\%20Data\%20Integrity\%20June\%207,\%202019.pdf}{Residential
+Data Integrity Preliminary Report}. In part 2 of this project you will
+be building a linear model that predict sales prices using training data
+but it's important to first understand how the structure of the data
+informs such a model. In this section, we will make a series of
+exploratory visualizations and feature engineering in preparation for
+that prediction task.
+
+Note that we will perform EDA on the \textbf{training data}.
+
+\hypertarget{sale-price}{%
+\subsubsection{Sale Price}\label{sale-price}}
+
+We begin by examining the distribution of our target variable
+\texttt{SalePrice}. At the same time, we also take a look at some
+descriptive statistics of this variable. We have provided the following
+helper method \texttt{plot\_distribution} that you can use to visualize
+the distribution of the \texttt{SalePrice} using both the histogram and
+the box plot at the same time. Run the following 2 cells and describe
+what you think is wrong with the visualization.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{plot\PYZus{}distribution}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{label}\PY{p}{)}\PY{p}{:}
+    \PY{n}{fig}\PY{p}{,} \PY{n}{axs} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{nrows}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+
+    \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}
+        \PY{n}{data}\PY{p}{[}\PY{n}{label}\PY{p}{]}\PY{p}{,} 
+        \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{p}{)}
+    \PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}
+        \PY{n}{data}\PY{p}{[}\PY{n}{label}\PY{p}{]}\PY{p}{,}
+        \PY{n}{width}\PY{o}{=}\PY{l+m+mf}{0.3}\PY{p}{,} 
+        \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+        \PY{n}{showfliers}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,}
+    \PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Align axes}
+    \PY{n}{spacer} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{n}{label}\PY{p}{]}\PY{p}{)} \PY{o}{*} \PY{l+m+mf}{0.05}
+    \PY{n}{xmin} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{n}{label}\PY{p}{]}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{spacer}
+    \PY{n}{xmax} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{n}{label}\PY{p}{]}\PY{p}{)} \PY{o}{+} \PY{n}{spacer}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlim}\PY{p}{(}\PY{p}{(}\PY{n}{xmin}\PY{p}{,} \PY{n}{xmax}\PY{p}{)}\PY{p}{)}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlim}\PY{p}{(}\PY{p}{(}\PY{n}{xmin}\PY{p}{,} \PY{n}{xmax}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Remove some axis text}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{xaxis}\PY{o}{.}\PY{n}{set\PYZus{}visible}\PY{p}{(}\PY{k+kc}{False}\PY{p}{)}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{yaxis}\PY{o}{.}\PY{n}{set\PYZus{}visible}\PY{p}{(}\PY{k+kc}{False}\PY{p}{)}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{yaxis}\PY{o}{.}\PY{n}{set\PYZus{}visible}\PY{p}{(}\PY{k+kc}{False}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Put the two plots together}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plot\PYZus{}distribution}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_25_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{question-2}{%
+\subsection{Question 2}\label{question-2}}
+
+\hypertarget{part-1}{%
+\subsubsection{Part 1}\label{part-1}}
+
+Identify one issue with the visualization above and briefly describe one
+way to overcome it. You may also want to try running
+\texttt{training\_data{[}\textquotesingle{}Sale\ Price\textquotesingle{}{]}.describe()}
+in a different cell to see some specific summary statistics on the
+distribution of the target variable. Make sure to delete the cell
+afterwards as the autograder may not work otherwise.
+
+    The x-axis on the visualization above has caused the boxplot and
+histogram to be cramped up to the left depicting a false image of the
+data as the plot is not scaled. Moreover, there is no y-axis for the
+histogram which makes it difficult to depict whether the histogram is
+using count or density. The a-xis is extended to capture the max value
+which occurs at \(7.1 * 10^7\) but that value is an outlier and distorts
+the accuracy of the rest of the plot.
+
+    
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+count    2.047920e+05
+mean     2.451646e+05
+std      3.628694e+05
+min      1.000000e+00
+25\%      4.520000e+04
+50\%      1.750000e+05
+75\%      3.120000e+05
+max      7.100000e+07
+Name: Sale Price, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-2}{%
+\subsubsection{Part 2}\label{part-2}}
+
+To zoom in on the visualization of most households, we will focus only
+on a subset of \texttt{Sale\ Price} for this assignment. In addition, it
+may be a good idea to apply log transformation to \texttt{Sale\ Price}.
+In the cell below, reassign \texttt{training\_data} to a new dataframe
+that is the same as the original one \textbf{except with the following
+changes}:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{training\_data} should contain only households whose price is
+  at least \$500.
+\item
+  \texttt{training\_data} should contain a new \texttt{Log\ Sale\ Price}
+  column that contains the log-transformed sale prices.
+\end{itemize}
+
+\textbf{Note}: This also implies from now on, our target variable in the
+model will be the log transformed sale prices from the column
+\texttt{Log\ Sale\ Price}.
+
+\textbf{Note}: You should \textbf{NOT} remove the original column
+\texttt{Sale\ Price} as it will be helpful for later questions.
+
+\emph{To ensure that any error from this part does not propagate to
+later questions, there will be no hidden test here.}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                   PIN  Property Class  Neighborhood Code  Land Square Feet  \textbackslash{}
+0       17294100610000             203                 50            2500.0
+1       13272240180000             202                120            3780.0
+2       25221150230000             202                210            4375.0
+3       10251130030000             203                220            4375.0
+4       31361040550000             202                120            8400.0
+{\ldots}                {\ldots}             {\ldots}                {\ldots}               {\ldots}
+204787  25163010260000             202                321            4375.0
+204788   5063010090000             204                 21           16509.0
+204789  16333020150000             202                 90            3810.0
+204790   9242030500000             203                 80            6650.0
+204791  19102030080000             203                 30            2500.0
+
+        Town Code  Apartments  Wall Material  Roof Material  Basement  \textbackslash{}
+0              76         0.0            2.0            1.0       1.0
+1              71         0.0            2.0            1.0       1.0
+2              70         0.0            2.0            1.0       2.0
+3              17         0.0            3.0            1.0       1.0
+4              32         0.0            3.0            1.0       2.0
+{\ldots}           {\ldots}         {\ldots}            {\ldots}            {\ldots}       {\ldots}
+204787         72         0.0            2.0            1.0       1.0
+204788         23         0.0            1.0            1.0       1.0
+204789         15         0.0            2.0            1.0       1.0
+204790         22         0.0            2.0            1.0       1.0
+204791         72         0.0            1.0            1.0       1.0
+
+        Basement Finish  {\ldots}  Sale Month of Year  Sale Half of Year  \textbackslash{}
+0                   3.0  {\ldots}                   9                  2
+1                   1.0  {\ldots}                   5                  1
+2                   3.0  {\ldots}                   2                  1
+3                   3.0  {\ldots}                   7                  2
+4                   3.0  {\ldots}                   6                  1
+{\ldots}                 {\ldots}  {\ldots}                 {\ldots}                {\ldots}
+204787              1.0  {\ldots}                   7                  2
+204788              1.0  {\ldots}                   3                  1
+204789              1.0  {\ldots}                   1                  1
+204790              3.0  {\ldots}                   2                  1
+204791              3.0  {\ldots}                   4                  1
+
+        Most Recent Sale  Age Decade  Pure Market Filter  Garage Indicator  \textbackslash{}
+0                    1.0        13.2                   0               0.0
+1                    1.0         9.6                   1               1.0
+2                    0.0        11.2                   1               1.0
+3                    1.0         6.3                   1               1.0
+4                    0.0         6.3                   1               1.0
+{\ldots}                  {\ldots}         {\ldots}                 {\ldots}               {\ldots}
+204787               0.0         5.8                   1               1.0
+204788               1.0         9.3                   1               1.0
+204789               1.0         5.9                   1               1.0
+204790               1.0         6.0                   1               1.0
+204791               0.0         4.7                   1               0.0
+
+        Neigborhood Code (mapping)  Town and Neighborhood  \textbackslash{}
+0                               50                   7650
+1                              120                  71120
+2                              210                  70210
+3                              220                  17220
+4                              120                  32120
+{\ldots}                            {\ldots}                    {\ldots}
+204787                         321                  72321
+204788                          21                   2321
+204789                          90                   1590
+204790                          80                   2280
+204791                          30                   7230
+
+                                              Description  Lot Size
+0       This property, sold on 09/14/2015, is a one-st{\ldots}    2500.0
+1       This property, sold on 05/23/2018, is a one-st{\ldots}    3780.0
+2       This property, sold on 02/18/2016, is a one-st{\ldots}    4375.0
+3       This property, sold on 07/23/2013, is a one-st{\ldots}    4375.0
+4       This property, sold on 06/10/2016, is a one-st{\ldots}    8400.0
+{\ldots}                                                   {\ldots}       {\ldots}
+204787  This property, sold on 07/23/2014, is a one-st{\ldots}    4375.0
+204788  This property, sold on 03/27/2019, is a one-st{\ldots}   16509.0
+204789  This property, sold on 01/31/2014, is a one-st{\ldots}    3810.0
+204790  This property, sold on 02/22/2018, is a one-st{\ldots}    6650.0
+204791  This property, sold on 04/22/2014, is a one-st{\ldots}    2500.0
+
+[204792 rows x 62 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+0              1
+1         285000
+2          22000
+3         225000
+4          22600
+           {\ldots}
+204787     37100
+204788    225000
+204789    135000
+204790    392000
+204791    125000
+Name: Sale Price, Length: 204792, dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data} \PY{o}{=} \PY{n}{training\PYZus{}data}\PY{p}{[}\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{500}\PY{p}{]}
+\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q2b}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q2b results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Let's create a new distribution plot on the log-transformed sale price.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plot\PYZus{}distribution}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{;}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_36_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{question-3}{%
+\subsection{Question 3}\label{question-3}}
+
+\hypertarget{part-1}{%
+\subsubsection{Part 1}\label{part-1}}
+
+To check your understanding of the graph and summary statistics above,
+answer the following \texttt{True} or \texttt{False} questions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The distribution of \texttt{Log\ Sale\ Price} in the training set is
+  symmetric.
+\item
+  The mean of \texttt{Log\ Sale\ Price} in the training set is greater
+  than the median.
+\item
+  At least 25\% of the houses in the training set sold for more than
+  \$200,000.00.
+\end{enumerate}
+
+\emph{The provided tests for this question do not confirm that you have
+answered correctly; only that you have assigned each variable to
+\texttt{True} or \texttt{False}.}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} These should be True or False}
+\PY{n}{q3statement1} \PY{o}{=} \PY{k+kc}{True}
+\PY{n}{q3statement2} \PY{o}{=} \PY{k+kc}{False}
+\PY{n}{q3statement3} \PY{o}{=} \PY{k+kc}{True}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q3a}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q3a results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-2}{%
+\subsubsection{Part 2}\label{part-2}}
+
+Next, we want to explore if any there is any correlation between
+\texttt{Log\ Sale\ Price} and the total area occupied by the household.
+The \texttt{codebook.txt} file tells us the column
+\texttt{Building\ Square\ Feet} should do the trick -- it measures
+``(from the exterior) the total area, in square feet, occupied by the
+building''.
+
+Before creating this jointplot however, let's also apply a log
+transformation to the \texttt{Building\ Square\ Feet} column.
+
+In the following cell, create a new column
+\texttt{Log\ Building\ Square\ Feet} in our \texttt{training\_data} that
+contains the log transformed area occupied by each household.
+
+\textbf{You should NOT remove the original
+\texttt{Building\ Square\ Feet} column this time as it will be used for
+later questions}.
+
+\emph{To ensure that any errors from this part do not propagate to later
+questions, there will be no hidden tests here.}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log Building Square Feet}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Building Square Feet}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q3b}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q3b results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-3}{%
+\subsubsection{Part 3}\label{part-3}}
+
+As shown below, we created a joint plot with
+\texttt{Log\ Building\ Square\ Feet} on the x-axis, and
+\texttt{Log\ Sale\ Price} on the y-axis. In addition, we fit a simple
+linear regression line through the bivariate scatter plot in the middle.
+
+Based on the following plot, does there exist a correlation between
+\texttt{Log\ Sale\ Price} and \texttt{Log\ Building\ Square\ Feet}?
+Would \texttt{Log\ Building\ Square\ Feet} make a good candidate as one
+of the features for our model?
+
+\begin{figure}
+\centering
+\includegraphics{images/q2p3_jointplot.png}
+\caption{Joint Plot}
+\end{figure}
+
+    There is a positive correlation between the two variable, however a
+linear correlation may not be the most accurate one. I believe Log
+Building Square Feet would make a good candidate as one of the feature
+for our model as there is a clear correlation between the two variables.
+
+    \hypertarget{question-4}{%
+\subsection{Question 4}\label{question-4}}
+
+Continuing from the previous part, as you explore the data set, you
+might still run into more outliers that prevent you from creating a
+clear visualization or capturing the trend of the majority of the
+houses.
+
+For this assignment, we will work to remove these outliers from the data
+as we run into them. Write a function \texttt{remove\_outliers} that
+removes outliers from a data set based off a threshold value of a
+variable. For example,
+\texttt{remove\_outliers(training\_data,\ \textquotesingle{}Building\ Square\ Feet\textquotesingle{},\ upper=8000)}
+should return a data frame with only observations that satisfy
+\texttt{Building\ Square\ Feet} less than or equal to 8000.
+
+\emph{The provided tests check that training\_data was updated
+correctly, so that future analyses are not corrupted by a mistake.
+However, the provided tests do not check that you have implemented
+remove\_outliers correctly so that it works with any data, variable,
+lower, and upper bound.}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{remove\PYZus{}outliers}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{variable}\PY{p}{,} \PY{n}{lower}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{n}{np}\PY{o}{.}\PY{n}{inf}\PY{p}{,} \PY{n}{upper}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{inf}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Input:}
+\PY{l+s+sd}{      data (data frame): the table to be filtered}
+\PY{l+s+sd}{      variable (string): the column with numerical outliers}
+\PY{l+s+sd}{      lower (numeric): observations with values lower than this will be removed}
+\PY{l+s+sd}{      upper (numeric): observations with values higher than this will be removed}
+\PY{l+s+sd}{    }
+\PY{l+s+sd}{    Output:}
+\PY{l+s+sd}{      a data frame with outliers removed}
+\PY{l+s+sd}{      }
+\PY{l+s+sd}{    Note: This function should not change mutate the contents of data.}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}  
+    \PY{k}{return} \PY{n}{data}\PY{p}{[}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{n}{variable}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{lower}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{n}{variable}\PY{p}{]} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{upper}\PY{p}{)}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q4}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q4 results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{part-3-feature-engineering}{%
+\section{Part 3: Feature Engineering}\label{part-3-feature-engineering}}
+
+In this section we will walk you through a few feature engineering
+techniques.
+
+\hypertarget{bedrooms}{%
+\subsubsection{Bedrooms}\label{bedrooms}}
+
+Let's start simple by extracting the total number of bedrooms as our
+first feature for the model. You may notice that the \texttt{Bedrooms}
+column doesn't actually exist in the original dataframe! Instead, it is
+part of the \texttt{Description} column.
+
+\hypertarget{question-5}{%
+\subsection{Question 5}\label{question-5}}
+
+\hypertarget{part-1}{%
+\subsubsection{Part 1}\label{part-1}}
+
+Let's take a closer look at the \texttt{Description} column first.
+Compare the description across a few rows together at the same time. For
+the following list of variables, how many of them can be extracted from
+the \texttt{Description} column? Assign your answer as an integer to the
+variable \texttt{q4a}. - The date the property was sold on - The number
+of stories the property contains - The previous owner of the property -
+The address of the property - The number of garages the property has -
+The total number of rooms inside the property - The total number of
+bedrooms inside the property - The total number of bathrooms inside the
+property
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{list}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Description}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{5}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+['This property, sold on 05/23/2018, is a one-story houeshold located at 2844 N
+LOWELL AVE.It has a total of 6 rooms, 3 of which are bedrooms, and 1.0 of which
+are bathrooms.',
+ 'This property, sold on 02/18/2016, is a one-story houeshold located at 11415 S
+PRAIRIE AVE.It has a total of 7 rooms, 3 of which are bedrooms, and 1.0 of which
+are bathrooms.',
+ 'This property, sold on 07/23/2013, is a one-story with partially livable
+attics houeshold located at 2012 DOBSON ST.It has a total of 5 rooms, 3 of which
+are bedrooms, and 1.5 of which are bathrooms.',
+ 'This property, sold on 06/10/2016, is a one-story houeshold located at 104
+SAUK TRL.It has a total of 5 rooms, 2 of which are bedrooms, and 1.0 of which
+are bathrooms.',
+ 'This property, sold on 10/26/2017, is a one-story with partially livable
+attics houeshold located at 2820 186TH ST.It has a total of 6 rooms, 4 of which
+are bedrooms, and 1.5 of which are bathrooms.']
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{q5a} \PY{o}{=} \PY{l+m+mi}{6}
+\PY{o}{.}\PY{o}{.}\PY{o}{.}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q5a}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q5a results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} optional cell for scratch work}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-2}{%
+\subsubsection{Part 2}\label{part-2}}
+
+Write a function \texttt{add\_total\_bedrooms(data)} that returns a copy
+of \texttt{data} with an additional column called \texttt{Bedrooms} that
+contains the total number of bedrooms (as integers) for each house.
+\textbf{Treat missing values as zeros if necessary}. Remember that you
+can make use of vectorized code here; you shouldn't need any
+\texttt{for} statements.
+
+\textbf{Hint}: You should consider inspecting the \texttt{Description}
+column to figure out if there is any general structure within the text.
+Once you have noticed a certain pattern, you are set with the power of
+Regex!
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{add\PYZus{}total\PYZus{}bedrooms}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Input:}
+\PY{l+s+sd}{      data (data frame): a data frame containing at least the Description column.}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{with\PYZus{}rooms} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+    \PY{n}{with\PYZus{}rooms}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bedrooms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{with\PYZus{}rooms}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Description}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{extract}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{d+) of which are bedrooms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{expand} \PY{o}{=} \PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
+    \PY{k}{return} \PY{n}{with\PYZus{}rooms}
+
+\PY{n}{training\PYZus{}data} \PY{o}{=} \PY{n}{add\PYZus{}total\PYZus{}bedrooms}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q5b}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q5b results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-3}{%
+\subsubsection{Part 3}\label{part-3}}
+
+Create a visualization that clearly and succintly shows if there exists
+an association between \texttt{Bedrooms} and \texttt{Log\ Sale\ Price}.
+A good visualization should satisfy the following requirements: - It
+should avoid overplotting. - It should have clearly labeled axes and
+succinct title. - It should convey the strength of the correlation
+between the sale price and the number of rooms.
+
+\textbf{Hint}: A direct scatter plot of the sale price against the
+number of rooms for all of the households in our training data might
+risk overplotting.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{sns}\PY{o}{.}\PY{n}{violinplot}\PY{p}{(}\PY{n}{x} \PY{o}{=} \PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bedrooms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{p}{,} \PY{n}{y} \PY{o}{=} \PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot:xlabel='Bedrooms', ylabel='Log Sale Price'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_58_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{question-6}{%
+\subsection{Question 6}\label{question-6}}
+
+    Now, let's take a look at the relationship between neighborhood and sale
+prices of the houses in our data set. Notice that currently we don't
+have the actual names for the neighborhoods. Instead we will use a
+similar column \texttt{Neighborhood\ Code} (which is a numerical
+encoding of the actual neighborhoods by the Assessment office).
+
+    \hypertarget{part-1}{%
+\subsubsection{Part 1}\label{part-1}}
+
+Before creating any visualization, let's quickly inspect how many
+different neighborhoods we are dealing with.
+
+Assign the variable \texttt{num\_neighborhoods} with the total number of
+neighborhoods in \texttt{training\_data}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{unique}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<bound method Series.unique of 1         120
+2         210
+3         220
+4         120
+6         181
+         {\ldots}
+204787    321
+204788     21
+204789     90
+204790     80
+204791     30
+Name: Neighborhood Code, Length: 168931, dtype: int64>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{num\PYZus{}neighborhoods} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\PY{n}{num\PYZus{}neighborhoods}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+193
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q6a}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q6a results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-2}{%
+\subsubsection{Part 2}\label{part-2}}
+
+If we try directly plotting the distribution of
+\texttt{Log\ Sale\ Price} for all of the households in each neighborhood
+using the \texttt{plot\_categorical} function from the next cell, we
+would get the following visualization.
+\includegraphics{images/q5p2_catplot.png}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{plot\PYZus{}categorical}\PY{p}{(}\PY{n}{neighborhoods}\PY{p}{)}\PY{p}{:}
+    \PY{n}{fig}\PY{p}{,} \PY{n}{axs} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{nrows}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+
+    \PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}
+        \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{data}\PY{o}{=}\PY{n}{neighborhoods}\PY{p}{,}
+        \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}
+    \PY{p}{)}
+
+    \PY{n}{sns}\PY{o}{.}\PY{n}{countplot}\PY{p}{(}
+        \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{data}\PY{o}{=}\PY{n}{neighborhoods}\PY{p}{,} 
+        \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+    \PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Draw median price}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}
+        \PY{n}{y}\PY{o}{=}\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{)}\PY{p}{,} 
+        \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{linestyle}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dotted}\PY{l+s+s1}{\PYZsq{}}
+    \PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Label the bars with counts}
+    \PY{k}{for} \PY{n}{patch} \PY{o+ow}{in} \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{patches}\PY{p}{:}
+        \PY{n}{x} \PY{o}{=} \PY{n}{patch}\PY{o}{.}\PY{n}{get\PYZus{}bbox}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{get\PYZus{}points}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}
+        \PY{n}{y} \PY{o}{=} \PY{n}{patch}\PY{o}{.}\PY{n}{get\PYZus{}bbox}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{get\PYZus{}points}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}
+        \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{annotate}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n+nb}{int}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{p}{(}\PY{n}{x}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{y}\PY{p}{)}\PY{p}{,} \PY{n}{ha}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{center}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{va}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bottom}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Format x\PYZhy{}axes}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xticklabels}\PY{p}{(}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{xaxis}\PY{o}{.}\PY{n}{get\PYZus{}majorticklabels}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{90}\PY{p}{)}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{xaxis}\PY{o}{.}\PY{n}{set\PYZus{}visible}\PY{p}{(}\PY{k+kc}{False}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Narrow the gap between the plots}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.01}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Oh no, looks like we have run into the problem of overplotting again!
+
+You might have noticed that the graph is overplotted because
+\textbf{there are actually quite a few neighborhoods in our dataset}!
+For the clarity of our visualization, we will have to zoom in again on a
+few of them. The reason for this is our visualization will become quite
+cluttered with a super dense x-axis.
+
+Assign the variable \texttt{in\_top\_20\_neighborhoods} to a copy of
+\texttt{training\_data} that contains only top 20 neighborhoods with the
+most number of houses.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{training\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                   PIN  Property Class  Neighborhood Code  Land Square Feet  \textbackslash{}
+1       13272240180000             202                120            3780.0
+2       25221150230000             202                210            4375.0
+3       10251130030000             203                220            4375.0
+4       31361040550000             202                120            8400.0
+6       30314240080000             203                181           10890.0
+{\ldots}                {\ldots}             {\ldots}                {\ldots}               {\ldots}
+204787  25163010260000             202                321            4375.0
+204788   5063010090000             204                 21           16509.0
+204789  16333020150000             202                 90            3810.0
+204790   9242030500000             203                 80            6650.0
+204791  19102030080000             203                 30            2500.0
+
+        Town Code  Apartments  Wall Material  Roof Material  Basement  \textbackslash{}
+1              71         0.0            2.0            1.0       1.0
+2              70         0.0            2.0            1.0       2.0
+3              17         0.0            3.0            1.0       1.0
+4              32         0.0            3.0            1.0       2.0
+6              37         0.0            1.0            1.0       1.0
+{\ldots}           {\ldots}         {\ldots}            {\ldots}            {\ldots}       {\ldots}
+204787         72         0.0            2.0            1.0       1.0
+204788         23         0.0            1.0            1.0       1.0
+204789         15         0.0            2.0            1.0       1.0
+204790         22         0.0            2.0            1.0       1.0
+204791         72         0.0            1.0            1.0       1.0
+
+        Basement Finish  {\ldots}  Age Decade  Pure Market Filter  \textbackslash{}
+1                   1.0  {\ldots}         9.6                   1
+2                   3.0  {\ldots}        11.2                   1
+3                   3.0  {\ldots}         6.3                   1
+4                   3.0  {\ldots}         6.3                   1
+6                   3.0  {\ldots}        10.9                   1
+{\ldots}                 {\ldots}  {\ldots}         {\ldots}                 {\ldots}
+204787              1.0  {\ldots}         5.8                   1
+204788              1.0  {\ldots}         9.3                   1
+204789              1.0  {\ldots}         5.9                   1
+204790              3.0  {\ldots}         6.0                   1
+204791              3.0  {\ldots}         4.7                   1
+
+        Garage Indicator  Neigborhood Code (mapping)  Town and Neighborhood  \textbackslash{}
+1                    1.0                         120                  71120
+2                    1.0                         210                  70210
+3                    1.0                         220                  17220
+4                    1.0                         120                  32120
+6                    1.0                         181                  37181
+{\ldots}                  {\ldots}                         {\ldots}                    {\ldots}
+204787               1.0                         321                  72321
+204788               1.0                          21                   2321
+204789               1.0                          90                   1590
+204790               1.0                          80                   2280
+204791               0.0                          30                   7230
+
+                                              Description  Lot Size  \textbackslash{}
+1       This property, sold on 05/23/2018, is a one-st{\ldots}    3780.0
+2       This property, sold on 02/18/2016, is a one-st{\ldots}    4375.0
+3       This property, sold on 07/23/2013, is a one-st{\ldots}    4375.0
+4       This property, sold on 06/10/2016, is a one-st{\ldots}    8400.0
+6       This property, sold on 10/26/2017, is a one-st{\ldots}   10890.0
+{\ldots}                                                   {\ldots}       {\ldots}
+204787  This property, sold on 07/23/2014, is a one-st{\ldots}    4375.0
+204788  This property, sold on 03/27/2019, is a one-st{\ldots}   16509.0
+204789  This property, sold on 01/31/2014, is a one-st{\ldots}    3810.0
+204790  This property, sold on 02/22/2018, is a one-st{\ldots}    6650.0
+204791  This property, sold on 04/22/2014, is a one-st{\ldots}    2500.0
+
+        Log Sale Price  Log Building Square Feet  Bedrooms
+1            12.560244                  6.904751         3
+2             9.998798                  6.810142         3
+3            12.323856                  7.068172         3
+4            10.025705                  6.855409         2
+6            11.512925                  7.458186         4
+{\ldots}                {\ldots}                       {\ldots}       {\ldots}
+204787       10.521372                  6.813445         2
+204788       12.323856                  7.603399         4
+204789       11.813030                  6.815640         3
+204790       12.879017                  7.092574         3
+204791       11.736069                  6.946976         2
+
+[168931 rows x 65 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{top\PYZus{}neigborhoods} \PY{o}{=} \PY{n}{training\PYZus{}data}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{agg}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{)}
+\PY{n}{in\PYZus{}top\PYZus{}20\PYZus{}neighborhoods} \PY{o}{=} \PY{n}{training\PYZus{}data}\PY{p}{[}\PY{n}{training\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{isin}\PY{p}{(}\PY{n}{top\PYZus{}neigborhoods}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{p}{]}
+\PY{n}{in\PYZus{}top\PYZus{}20\PYZus{}neighborhoods}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                   PIN  Property Class  Neighborhood Code  Land Square Feet  \textbackslash{}
+1       13272240180000             202                120            3780.0
+4       31361040550000             202                120            8400.0
+8       13232040260000             205                 70            3100.0
+10      19074270080000             202                380            3750.0
+11      15083050330000             203                 20            5092.0
+{\ldots}                {\ldots}             {\ldots}                {\ldots}               {\ldots}
+204781  20361190390000             203                 80            4405.0
+204785   9284030280000             202                 40            6650.0
+204786   8141120110000             203                100           10010.0
+204790   9242030500000             203                 80            6650.0
+204791  19102030080000             203                 30            2500.0
+
+        Town Code  Apartments  Wall Material  Roof Material  Basement  \textbackslash{}
+1              71         0.0            2.0            1.0       1.0
+4              32         0.0            3.0            1.0       2.0
+8              71         0.0            2.0            2.0       1.0
+10             72         0.0            1.0            1.0       2.0
+11             31         0.0            2.0            1.0       1.0
+{\ldots}           {\ldots}         {\ldots}            {\ldots}            {\ldots}       {\ldots}
+204781         70         0.0            2.0            1.0       1.0
+204785         22         0.0            1.0            1.0       1.0
+204786         16         0.0            2.0            1.0       1.0
+204790         22         0.0            2.0            1.0       1.0
+204791         72         0.0            1.0            1.0       1.0
+
+        Basement Finish  {\ldots}  Age Decade  Pure Market Filter  \textbackslash{}
+1                   1.0  {\ldots}         9.6                   1
+4                   3.0  {\ldots}         6.3                   1
+8                   3.0  {\ldots}        10.0                   1
+10                  3.0  {\ldots}         7.4                   1
+11                  1.0  {\ldots}         5.8                   1
+{\ldots}                 {\ldots}  {\ldots}         {\ldots}                 {\ldots}
+204781              3.0  {\ldots}         5.7                   1
+204785              3.0  {\ldots}         6.1                   1
+204786              1.0  {\ldots}         5.6                   1
+204790              3.0  {\ldots}         6.0                   1
+204791              3.0  {\ldots}         4.7                   1
+
+        Garage Indicator  Neigborhood Code (mapping)  Town and Neighborhood  \textbackslash{}
+1                    1.0                         120                  71120
+4                    1.0                         120                  32120
+8                    1.0                          70                   7170
+10                   1.0                         380                  72380
+11                   1.0                          20                   3120
+{\ldots}                  {\ldots}                         {\ldots}                    {\ldots}
+204781               1.0                          80                   7080
+204785               1.0                          40                   2240
+204786               1.0                         100                  16100
+204790               1.0                          80                   2280
+204791               0.0                          30                   7230
+
+                                              Description  Lot Size  \textbackslash{}
+1       This property, sold on 05/23/2018, is a one-st{\ldots}    3780.0
+4       This property, sold on 06/10/2016, is a one-st{\ldots}    8400.0
+8       This property, sold on 08/25/2016, is a two-st{\ldots}    3100.0
+10      This property, sold on 05/01/2017, is a one-st{\ldots}    3750.0
+11      This property, sold on 04/29/2014, is a one-st{\ldots}    5092.0
+{\ldots}                                                   {\ldots}       {\ldots}
+204781  This property, sold on 07/15/2013, is a one-st{\ldots}    4405.0
+204785  This property, sold on 04/03/2014, is a one-st{\ldots}    6650.0
+204786  This property, sold on 09/08/2016, is a one-st{\ldots}   10010.0
+204790  This property, sold on 02/22/2018, is a one-st{\ldots}    6650.0
+204791  This property, sold on 04/22/2014, is a one-st{\ldots}    2500.0
+
+        Log Sale Price  Log Building Square Feet  Bedrooms
+1            12.560244                  6.904751         3
+4            10.025705                  6.855409         2
+8            13.422468                  7.636270         4
+10           11.695247                  6.841615         2
+11           11.184421                  6.911747         3
+{\ldots}                {\ldots}                       {\ldots}       {\ldots}
+204781       10.913269                  7.141245         3
+204785       11.736069                  6.761573         3
+204786       12.568978                  6.948897         3
+204790       12.879017                  7.092574         3
+204791       11.736069                  6.946976         2
+
+[85526 rows x 65 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q6b}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q6b results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Let's create another of the distribution of sale price within in each
+neighborhood again, but this time with a narrower focus!
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plot\PYZus{}categorical}\PY{p}{(}\PY{n}{neighborhoods}\PY{o}{=}\PY{n}{in\PYZus{}top\PYZus{}20\PYZus{}neighborhoods}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_72_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-3}{%
+\subsubsection{Part 3}\label{part-3}}
+
+It looks a lot better now than before, right? Based on the plot above,
+what can be said about the relationship between the houses'
+\texttt{Log\ Sale\ Price} and their neighborhoods?
+
+    There is no visible relationship between the neighborhoods and the
+houses' log sale price. For example, the neighborhoods with the highest
+count such as the neighborhood with code 30 has has a lower median than
+the overall meadian of all the houses while the neighborhood with code
+10 has a higher median than the overall median and it has the third
+highest count. Therefore, there is no distinct relationship between the
+neighborhood codes and the log scale prices.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-4}{%
+\subsubsection{Part 4}\label{part-4}}
+
+One way we can deal with the lack of data from some neighborhoods is to
+create a new feature that bins neighborhoods together. Let's categorize
+our neighborhoods in a crude way: we'll take the top 3 neighborhoods
+measured by median \texttt{Log\ Sale\ Price} and identify them as
+``expensive neighborhoods''; the other neighborhoods are not marked.
+
+Write a function that returns list of the neighborhood codes of the top
+\texttt{n} most pricy neighborhoods as measured by our choice of
+aggregating function. For example, in the setup above, we would want to
+call
+\texttt{find\_expensive\_neighborhoods(training\_data,\ 3,\ np.median)}
+to find the top 3 neighborhoods measured by median
+\texttt{Log\ Sale\ Price}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{find\PYZus{}expensive\PYZus{}neighborhoods}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{n}\PY{o}{=}\PY{l+m+mi}{3}\PY{p}{,} \PY{n}{metric}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{median}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Input:}
+\PY{l+s+sd}{      data (data frame): should contain at least a string\PYZhy{}valued \PYZsq{}Neighborhood Code\PYZsq{}}
+\PY{l+s+sd}{        and a numeric \PYZsq{}Sale Price\PYZsq{} column}
+\PY{l+s+sd}{      n (int): the number of top values desired}
+\PY{l+s+sd}{      metric (function): function used for aggregating the data in each neighborhood.}
+\PY{l+s+sd}{        for example, np.median for median prices}
+\PY{l+s+sd}{    }
+\PY{l+s+sd}{    Output:}
+\PY{l+s+sd}{      a list of the the neighborhood codes of the top n highest\PYZhy{}priced neighborhoods as measured by the metric function}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{neighborhoods} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{agg}\PY{p}{(}\PY{n}{metric}\PY{p}{)}\PY{o}{.}\PY{n}{nlargest}\PY{p}{(}\PY{n}{n}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Log Sale Price}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{to\PYZus{}list}\PY{p}{(}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} This makes sure the final list contains the generic int type used in Python3, not specific ones used in numpy.}
+    \PY{k}{return} \PY{p}{[}\PY{n+nb}{int}\PY{p}{(}\PY{n}{code}\PY{p}{)} \PY{k}{for} \PY{n}{code} \PY{o+ow}{in} \PY{n}{neighborhoods}\PY{p}{]}
+
+\PY{n}{expensive\PYZus{}neighborhoods} \PY{o}{=} \PY{n}{find\PYZus{}expensive\PYZus{}neighborhoods}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{median}\PY{p}{)}
+\PY{n}{expensive\PYZus{}neighborhoods}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[44, 94, 93]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q6d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q6d results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-5}{%
+\subsubsection{Part 5}\label{part-5}}
+
+We now have a list of neighborhoods we've deemed as higher-priced than
+others. Let's use that information to write a function
+\texttt{add\_expensive\_neighborhood} that adds a column
+\texttt{in\_expensive\_neighborhood} which takes on the value 1 if the
+house is part of \texttt{expensive\_neighborhoods} and the value 0
+otherwise. This type of variable is known as an \textbf{indicator
+variable}.
+
+\textbf{Hint:}
+\href{https://pandas.pydata.org/pandas-docs/version/0.23.4/generated/pandas.Series.astype.html}{\texttt{pd.Series.astype}}
+may be useful for converting True/False values to integers.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{39}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{add\PYZus{}in\PYZus{}expensive\PYZus{}neighborhood}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{neighborhoods}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Input:}
+\PY{l+s+sd}{      data (data frame): a data frame containing a \PYZsq{}Neighborhood Code\PYZsq{} column with values}
+\PY{l+s+sd}{        found in the codebook}
+\PY{l+s+sd}{      neighborhoods (list of strings): strings should be the names of neighborhoods}
+\PY{l+s+sd}{        pre\PYZhy{}identified as expensive}
+\PY{l+s+sd}{    Output:}
+\PY{l+s+sd}{      data frame identical to the input with the addition of a binary}
+\PY{l+s+sd}{      in\PYZus{}expensive\PYZus{}neighborhood column}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{in\PYZus{}expensive\PYZus{}neighborhood}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Neighborhood Code}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{isin}\PY{p}{(}\PY{n}{neighborhoods}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
+    \PY{k}{return} \PY{n}{data}
+
+\PY{n}{expensive\PYZus{}neighborhoods} \PY{o}{=} \PY{n}{find\PYZus{}expensive\PYZus{}neighborhoods}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{median}\PY{p}{)}
+\PY{n}{training\PYZus{}data} \PY{o}{=} \PY{n}{add\PYZus{}in\PYZus{}expensive\PYZus{}neighborhood}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{,} \PY{n}{expensive\PYZus{}neighborhoods}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{40}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q6e}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{40}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q6e results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{question-7}{%
+\subsection{Question 7}\label{question-7}}
+
+In the following question, we will take a closer look at the
+\texttt{Roof\ Material} feature of the dataset and examine how we can
+incorporate categorical features into our linear model.
+
+    \hypertarget{part-1}{%
+\subsubsection{Part 1}\label{part-1}}
+
+If we look at \texttt{codebook.txt} carefully, we can see that the
+Assessor's Office uses the following mapping for the numerical values in
+the \texttt{Roof\ Material} column.
+
+\begin{verbatim}
+Central Heating (Nominal): 
+
+       1    Shingle/Asphalt
+       2    Tar&Gravel
+       3    Slate
+       4    Shake
+       5    Tile
+       6    Other
+\end{verbatim}
+
+Write a function \texttt{substitute\_roof\_material} that replaces each
+numerical value in \texttt{Roof\ Material} with their corresponding roof
+material. Your function should return a new DataFrame, not modify the
+existing DataFrame.
+
+\textbf{Hint}: the
+\href{https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.replace.html}{DataFrame.replace}
+method may be useful here.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{41}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{substitute\PYZus{}roof\PYZus{}material}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Input:}
+\PY{l+s+sd}{      data (data frame): a data frame containing a \PYZsq{}Roof Material\PYZsq{} column.  Its values}
+\PY{l+s+sd}{                         should be limited to those found in the codebook}
+\PY{l+s+sd}{    Output:}
+\PY{l+s+sd}{      data frame identical to the input except with a refactored \PYZsq{}Roof Material\PYZsq{} column}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{data2} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+    \PY{n}{data2}  \PY{o}{=} \PY{n}{data2}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Roof Material}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{\PYZob{}}\PY{l+m+mi}{1} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Shingle/Asphalt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Tar\PYZam{}Gravel}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Slate}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Shake}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Tile}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Other}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{data2}
+    
+\PY{n}{training\PYZus{}data} \PY{o}{=} \PY{n}{substitute\PYZus{}roof\PYZus{}material}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{)}
+\PY{n}{training\PYZus{}data}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\PY{n}{training\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{41}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                   PIN  Property Class  Neighborhood Code  Land Square Feet  \textbackslash{}
+1       13272240180000             202                120            3780.0
+2       25221150230000             202                210            4375.0
+3       10251130030000             203                220            4375.0
+4       31361040550000             202                120            8400.0
+6       30314240080000             203                181           10890.0
+{\ldots}                {\ldots}             {\ldots}                {\ldots}               {\ldots}
+204787  25163010260000             202                321            4375.0
+204788   5063010090000             204                 21           16509.0
+204789  16333020150000             202                 90            3810.0
+204790   9242030500000             203                 80            6650.0
+204791  19102030080000             203                 30            2500.0
+
+        Town Code  Apartments  Wall Material    Roof Material  Basement  \textbackslash{}
+1              71         0.0            2.0  Shingle/Asphalt       1.0
+2              70         0.0            2.0  Shingle/Asphalt       2.0
+3              17         0.0            3.0  Shingle/Asphalt       1.0
+4              32         0.0            3.0  Shingle/Asphalt       2.0
+6              37         0.0            1.0  Shingle/Asphalt       1.0
+{\ldots}           {\ldots}         {\ldots}            {\ldots}              {\ldots}       {\ldots}
+204787         72         0.0            2.0  Shingle/Asphalt       1.0
+204788         23         0.0            1.0  Shingle/Asphalt       1.0
+204789         15         0.0            2.0  Shingle/Asphalt       1.0
+204790         22         0.0            2.0  Shingle/Asphalt       1.0
+204791         72         0.0            1.0  Shingle/Asphalt       1.0
+
+        Basement Finish  {\ldots}  Pure Market Filter  Garage Indicator  \textbackslash{}
+1                   1.0  {\ldots}                   1               1.0
+2                   3.0  {\ldots}                   1               1.0
+3                   3.0  {\ldots}                   1               1.0
+4                   3.0  {\ldots}                   1               1.0
+6                   3.0  {\ldots}                   1               1.0
+{\ldots}                 {\ldots}  {\ldots}                 {\ldots}               {\ldots}
+204787              1.0  {\ldots}                   1               1.0
+204788              1.0  {\ldots}                   1               1.0
+204789              1.0  {\ldots}                   1               1.0
+204790              3.0  {\ldots}                   1               1.0
+204791              3.0  {\ldots}                   1               0.0
+
+        Neigborhood Code (mapping)  Town and Neighborhood  \textbackslash{}
+1                              120                  71120
+2                              210                  70210
+3                              220                  17220
+4                              120                  32120
+6                              181                  37181
+{\ldots}                            {\ldots}                    {\ldots}
+204787                         321                  72321
+204788                          21                   2321
+204789                          90                   1590
+204790                          80                   2280
+204791                          30                   7230
+
+                                              Description  Lot Size  \textbackslash{}
+1       This property, sold on 05/23/2018, is a one-st{\ldots}    3780.0
+2       This property, sold on 02/18/2016, is a one-st{\ldots}    4375.0
+3       This property, sold on 07/23/2013, is a one-st{\ldots}    4375.0
+4       This property, sold on 06/10/2016, is a one-st{\ldots}    8400.0
+6       This property, sold on 10/26/2017, is a one-st{\ldots}   10890.0
+{\ldots}                                                   {\ldots}       {\ldots}
+204787  This property, sold on 07/23/2014, is a one-st{\ldots}    4375.0
+204788  This property, sold on 03/27/2019, is a one-st{\ldots}   16509.0
+204789  This property, sold on 01/31/2014, is a one-st{\ldots}    3810.0
+204790  This property, sold on 02/22/2018, is a one-st{\ldots}    6650.0
+204791  This property, sold on 04/22/2014, is a one-st{\ldots}    2500.0
+
+        Log Sale Price  Log Building Square Feet  Bedrooms  \textbackslash{}
+1            12.560244                  6.904751         3
+2             9.998798                  6.810142         3
+3            12.323856                  7.068172         3
+4            10.025705                  6.855409         2
+6            11.512925                  7.458186         4
+{\ldots}                {\ldots}                       {\ldots}       {\ldots}
+204787       10.521372                  6.813445         2
+204788       12.323856                  7.603399         4
+204789       11.813030                  6.815640         3
+204790       12.879017                  7.092574         3
+204791       11.736069                  6.946976         2
+
+        in\_expensive\_neighborhood
+1                               0
+2                               0
+3                               0
+4                               0
+6                               0
+{\ldots}                           {\ldots}
+204787                          0
+204788                          0
+204789                          0
+204790                          0
+204791                          0
+
+[168931 rows x 66 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{42}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q7a}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{42}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q7a results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-2}{%
+\subsubsection{Part 2}\label{part-2}}
+
+\hypertarget{an-important-note-on-one-hot-encoding}{%
+\paragraph{An Important Note on One Hot
+Encoding}\label{an-important-note-on-one-hot-encoding}}
+
+Unfortunately, simply fixing these missing values isn't sufficient for
+using \texttt{Roof\ Material} in our model. Since
+\texttt{Roof\ Material} is a categorical variable, we will have to
+one-hot-encode the data. Notice in the example code below that we have
+to pre-specify the categories. For more information on categorical data
+in pandas, refer to this
+\href{https://pandas-docs.github.io/pandas-docs-travis/user_guide/categorical.html}{link}.
+For more information on why we want to use one-hot-encoding, refer to
+this
+\href{https://machinelearningmastery.com/why-one-hot-encode-data-in-machine-learning/}{link}.
+
+Complete the following function \texttt{ohe\_roof\_material} that
+returns a dataframe with the new column one-hot-encoded on the roof
+material of the household. These new columns should have the form
+\texttt{Roof\ Material\_MATERIAL}. Your function should return a new
+DataFrame, not modify the existing DataFrame.
+
+\textbf{Note}: You should \textbf{avoid using \texttt{pd.get\_dummies}}
+in your solution as it will remove your original column and is therefore
+not as reusable as your constructed data preprocessing pipeline.
+Instead, you can one-hot-encode one column into multiple columns
+\textbf{using Scikit-learn's
+\href{https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html}{One
+Hot Encoder}}. It's far more customizable!
+
+\emph{Hint}: To get you started with this subpart, here is code that
+initializes a \texttt{OneHotEncoding} pre-processing ``model'' from
+Scikit-learn and fits it on a simple dataset containing (some of) the
+first names of your instructional staff this summer! Please play with
+this code before jumping into the roof material data if you are unsure
+how to approach the question using \texttt{OneHotEncoder}.
+
+\begin{verbatim}
+>>> oh_enc = OneHotEncoder()
+>>> oh_enc.fit([['Anirudhan'], ['Dominic'], ['Rahul'], ['Rahul'], ['Anirudhan'], ['Yike'], ['Vasanth']]);
+>>> oh_enc.transform([['Anirudhan'], ['Rahul'], ['Dominic']]).toarray()
+array([[1., 0., 0., 0., 0.],
+       [0., 0., 1., 0., 0.],
+       [0., 1., 0., 0., 0.]])
+\end{verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{43}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{preprocessing} \PY{k+kn}{import} \PY{n}{OneHotEncoder}
+
+\PY{k}{def} \PY{n+nf}{ohe\PYZus{}roof\PYZus{}material}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    One\PYZhy{}hot\PYZhy{}encodes roof material.  New columns are of the form x0\PYZus{}MATERIAL.}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{oh\PYZus{}enc} \PY{o}{=} \PY{n}{OneHotEncoder}\PY{p}{(}\PY{p}{)}
+    \PY{n}{a} \PY{o}{=} \PY{n}{oh\PYZus{}enc}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Roof Material}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{toarray}\PY{p}{(}\PY{p}{)}
+    \PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{columns} \PY{o}{=} \PY{n}{oh\PYZus{}enc}\PY{o}{.}\PY{n}{get\PYZus{}feature\PYZus{}names}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Roof Material}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{n}{df}\PY{o}{.}\PY{n}{merge}\PY{p}{(}\PY{n}{data}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{left\PYZus{}index} \PY{o}{=} \PY{k+kc}{True}\PY{p}{,} \PY{n}{right\PYZus{}index} \PY{o}{=} \PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{set\PYZus{}index}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{index}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ohe\PYZus{}roof\PYZus{}material}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{)}\PY{o}{.}\PY{n}{shape}
+\PY{n}{training\PYZus{}data} \PY{o}{=} \PY{n}{ohe\PYZus{}roof\PYZus{}material}\PY{p}{(}\PY{n}{training\PYZus{}data}\PY{p}{)}
+\PY{n}{training\PYZus{}data}\PY{o}{.}\PY{n}{filter}\PY{p}{(}\PY{n}{regex}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZca{}Roof Material\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{43}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+       Roof Material\_Other  Roof Material\_Shake  \textbackslash{}
+index
+1                      0.0                  0.0
+2                      0.0                  0.0
+3                      0.0                  0.0
+4                      0.0                  0.0
+6                      0.0                  0.0
+7                      0.0                  0.0
+8                      0.0                  0.0
+9                      0.0                  0.0
+10                     0.0                  0.0
+11                     0.0                  0.0
+
+       Roof Material\_Shingle/Asphalt  Roof Material\_Slate  \textbackslash{}
+index
+1                                1.0                  0.0
+2                                1.0                  0.0
+3                                1.0                  0.0
+4                                1.0                  0.0
+6                                1.0                  0.0
+7                                1.0                  0.0
+8                                0.0                  0.0
+9                                1.0                  0.0
+10                               1.0                  0.0
+11                               1.0                  0.0
+
+       Roof Material\_Tar\&Gravel  Roof Material\_Tile
+index
+1                           0.0                 0.0
+2                           0.0                 0.0
+3                           0.0                 0.0
+4                           0.0                 0.0
+6                           0.0                 0.0
+7                           0.0                 0.0
+8                           1.0                 0.0
+9                           0.0                 0.0
+10                          0.0                 0.0
+11                          0.0                 0.0
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{44}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{grader}\PY{o}{.}\PY{n}{check}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{q7b}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{44}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+q7b results: All test cases passed!
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{congratulations-you-have-finished-project-1a}{%
+\subsection{Congratulations! You have finished Project
+1A!}\label{congratulations-you-have-finished-project-1a}}
+
+In Project 1B, you will focus on building a linear model to predict home
+prices. You will be well-prepared to build such a model: you have
+considered what is in this data set, what it can be used for, and
+engineered some features that should be useful for prediction. Creating
+a house-pricing model for Cook County has some challenging social
+implications to think, though, however. This will be addressed in
+Lecture 14 on July 14 (pretty cool coincidence?!) and Thursday's
+discussion.
+
+    \hypertarget{submission}{%
+\subsection{Submission}\label{submission}}
+
+Make sure you have run all cells in your notebook in order before
+running the cell below, so that all images/graphs appear in the output.
+The cell below will generate a zip file for you to submit.
+\textbf{Please save before exporting!}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Save your notebook first, then run this cell to export your submission.}
+\PY{n}{grader}\PY{o}{.}\PY{n}{export}\PY{p}{(}\PY{n}{run\PYZus{}tests}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Running your submission against local test cases{\ldots}
+
+Your submission received the following results when run against available test
+cases:
+
+    q2b results: All test cases passed!
+
+    q3a results: All test cases passed!
+
+    q3b results: All test cases passed!
+
+    q4 results: All test cases passed!
+
+    q5a results: All test cases passed!
+
+    q5b results: All test cases passed!
+
+    q6a results: All test cases passed!
+
+    q6b results: All test cases passed!
+
+    q6d results: All test cases passed!
+
+    q6e results: All test cases passed!
+
+    q7a results: All test cases passed!
+
+    q7b results: All test cases passed!
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
